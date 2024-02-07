@@ -21,7 +21,6 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "UartRingbuffer_multi.h"
 #include "ESP8266_HAL.h"
 #include "stdio.h"
 #include "string.h"
@@ -115,43 +114,6 @@ void MQTT_Publish(const char *topic, const char *message) {
   ESP_SendCommand(message);
   HAL_Delay(1000);  // Adjust delay based on ESP response time
 }
-//// Function to connect to Azure IoT Hub using MQTT over AT commands
-//int connectToAzureIoTHubMQTT() {
-//    // Replace these placeholders with your actual Azure IoT Hub information
-//    const char* connectionString = "HostName=CapstoneProject.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=bVpSxX0PgZMqsoTx6p4CqmGAsi6Txv14SAIoTERXBAM=";
-//    const char* deviceId = "JackSTM";
-//
-//    // AT command to set the Azure IoT Hub connection string
-//    char command[100];
-//    snprintf(command, sizeof(command), "AT+MQTTCONN=\"%s\",\"%s\"\r\n", connectionString, deviceId);
-//
-//    // Send AT command to set connection string
-//    ESP_SendCommand(command);
-//
-//    // AT command to connect to Azure IoT Hub using MQTT
-//    strcpy(command, "AT+MQTTCONN\r\n");
-//
-//    // Send AT command to connect
-//    ESP_SendCommand(command);
-//    PC_SendMessage("Connected to Azure");
-//
-//
-//    // Connection successful
-//    return 1;
-//}
-//
-//// Function to send an MQTT message
-//void sendMQTTMessage(const char* topic, const char* message) {
-//    // AT command to publish an MQTT message
-//    char command[100];
-//    snprintf(command, sizeof(command), "AT+MQTTPUB=\"%s\",\"%s\"\r\n", topic, message);
-//
-//
-//    // Send AT command to publish
-//    ESP_SendCommand(command);
-//    PC_SendMessage("Sent MQTT");
-//
-//}
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
