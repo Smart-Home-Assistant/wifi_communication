@@ -18,10 +18,8 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "ESP8266_HAL.h"
 #include "stdio.h"
 #include "string.h"
 #include <stdbool.h>
@@ -82,31 +80,35 @@ void ConnectToWifi() {
 }
 
 void MQTT_Connect(const char *hostname, const char *deviceID, const char *sasToken) {
-  char connectMsg[200];
+  char connectMsg[300];
+  sprintf(connectMsg, "AT+CIPSTART=\"TCP\",\"%s\",8883\r\n", hostname);
+  ESP_SendCommand(connectMsg);
+
+  sprintf(connectMsg, "AT+CIPSEND=%d\r\n", 227);
+  ESP_SendCommand(connectMsg);
+
   sprintf(connectMsg,
-          "AT+CIPSTART=\"TCP\",\"%s\",8883\r\n"
-          "AT+CIPSEND=%d\r\n"
-          "MQTTCONNECT%s%s%s%s%s%s",
-          hostname,
-          strlen(deviceID) + 92,
-          "\x10\x5C\x00\x04MQTT\x04\x02\x00\x3C\x00",
-          "\x00",
-          "\x00",
-          "\x00",
-          "\x00",
-          deviceID);
+          "%s%s%s%s",
+          "\x10\xD0\x00\x04\x4D\x51\x54\x54\x04\x02\x00\x0A\x00\x30",
+		  deviceID,
+          "\x00\x3F",
+          sasToken);
   ESP_SendCommand(connectMsg);
   HAL_Delay(1000);  // Adjust delay based on ESP response time
 }
 
 void MQTT_Publish(const char *topic, const char *message) {
   char publishMsg[300];
+
+  sprintf(publishMsg, "AT+CIPSEND=%d\r\n", 44 +strlen(message));
+  ESP_SendCommand(publishMsg);
+
+
   sprintf(publishMsg,
-          "AT+CIPSEND=%d\r\n"
-          "MQTTPUBLISH%s%s",
-          strlen(topic) + strlen(message) + 4,
-          "\x00",
-          topic);
+          "%s%s%s",
+          "\x32\x00\x0F",
+          topic,
+		  message);
   ESP_SendCommand(publishMsg);
   HAL_Delay(1000);  // Adjust delay based on ESP response time
 
